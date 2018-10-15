@@ -1,71 +1,132 @@
-/*!
- * Clean Blog v1.0.0 (http://startbootstrap.com)
- * Copyright 2015 Start Bootstrap
- * Licensed under Apache 2.0 (https://github.com/IronSummitMedia/startbootstrap/blob/gh-pages/LICENSE)
- */
-
-// Tooltip Init
 $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
 
-// responsive tables
-$(document).ready(function() {
-    $("table").each(function(){
-      if ($(this).parent().get(0).tagName != 'FIGURE') {
-        $(this).addClass("table table-responsive table-striped table-hover");
-        $(this).find("th").addClass("text-center");
-      }
-    });
+	$('.post__main img').on('click', function () {
+		var $img = $(this);
+
+		$.fancybox.open([{
+			src: $img.attr('src'),
+			type: 'image'
+		}]);
+	});
+
+	$('[data-fancybox]').fancybox({
+		// closeClickOutside: false, 
+		image: {
+			protect: true
+		}
+	});
+
+	// key bind
+
+	// j  down
+	// k  top
+	// t  page top
+	// b  page bottom
+
+	// i  go index
+	var $body = $('html');
+
+	var isKeydown = false;
+	$body.on('keydown', function (e) {
+		// console.log(e.which, 'key down');
+
+		switch (e.which) {
+			case 74: // j down
+				if (!isKeydown) {
+					isKeydown = true;
+					requestAnimationFrame(function animate() {
+						var curTop = window.scrollY;
+						window.scrollTo(0, curTop + 15);
+
+						if (isKeydown) {
+							requestAnimationFrame(animate);
+						}
+					});
+				}
+
+				break;
+
+			case 75: // k up
+				if (!isKeydown) {
+					isKeydown = true;
+					requestAnimationFrame(function animate() {
+						var curTop = window.scrollY;
+						window.scrollTo(0, curTop - 15);
+
+						if (isKeydown) {
+							requestAnimationFrame(animate);
+						}
+					});
+				}
+
+				break;
+
+			case 191: // shift + / = ? show help modal
+				break;
+
+				// 16 shift
+			case 84: // t
+				window.scrollToTop(1);
+				break;
+
+			case 66: // b
+				window.scrollToBottom();
+				break;
+
+			case 78: // n half
+				window.scrollPageDown(1);
+				break;
+
+			case 77: // m
+				window.scrollPageUp(1);
+				break;
+		}
+
+	});
+
+	$body.on('keyup', function (e) {
+		isKeydown = false;
+	});
+
+	// print hint
+
+	var comments = [
+		'',
+		'                    .::::.            快捷键：',
+		'                  .::::::::.            j：下移',
+		'                 :::::::::::            k：上移',
+		"             ..:::::::::::'             t：移到最顶",
+		"           '::::::::::::'               b：移到最底",
+		'             .::::::::::                n：下移很多',
+		"        '::::::::::::::..               m：上移很多",
+		'             ..::::::::::::.',
+		'           ``::::::::::::::::',
+		"            ::::``:::::::::'        .:::.",
+		"           ::::'   ':::::'       .::::::::.",
+		"         .::::'      ::::     .:::::::'::::.",
+		"        .:::'       :::::  .::::::::'  ':::::.",
+		"       .::'        :::::::::::::::'      ':::::.",
+		"      .::'        :::::::::::::::'          ':::.",
+		"  ...:::          :::::::::::::'              ``::.",
+		" ```` ':.         '::::::::::'                  ::::..",
+		"                    ':::::'                    ':'````..",
+		''
+	];
+
+	comments.forEach(function (item) {
+		console.log('%c' + item, 'color: #399c9c');
+	});
+
+	$('.btn-reward').on('click', function (e) {
+		e.preventDefault();
+
+		var $reward = $('.reward-wrapper');
+		$reward.slideToggle();
+	});
+
+	$('body').addClass('queue-in');
+	setTimeout(function() {
+		$('body').css({ opacity: 1}).removeClass('queue-in');
+	}, 500);
+
 });
-
-// responsive embed videos
-$(document).ready(function () {
-    $('iframe[src*="youtube.com"]').wrap('<div class="embed-responsive embed-responsive-16by9"></div>');
-    $('iframe[src*="youtube.com"]').addClass('embed-responsive-item');
-    $('iframe[src*="vimeo.com"]').wrap('<div class="embed-responsive embed-responsive-16by9"></div>');
-    $('iframe[src*="vimeo.com"]').addClass('embed-responsive-item');
-    $('img').addClass('img-responsive-center')
-});
-
-// whether a post
-function isPages(attr){
-    var currentBoolean = document.querySelector('.navbar.header-navbar').getAttribute(attr);
-    if(currentBoolean === 'true'){return true;}
-    return false;
-}
-/*
-    scroll function
-    3 parameters
-        1. a DOM object
-        2 a class for targeted object
-        3 height when acctivated (optional. default: the height of the DOM)
-*/
-function scrollCheck(scrollTarget, toggleClass, scrollHeight){
-    document.addEventListener('scroll',function(){
-    var currentTop = window.pageYOffset;
-        currentTop > (scrollHeight||scrollTarget.clientHeight)
-        ?scrollTarget.classList.add(toggleClass)
-        :scrollTarget.classList.remove(toggleClass)
-    })
-}
-
-
-
-/*
-* Steps
-* 1. get the content of h1
-* 2. scroll and appear fixed navbar
-* 3. the content of h1 is shown center at the top of the page
-* */
-
-(function(){
-    if (isPages('data-ispost')){
-        var navbar = document.querySelector('.navbar-custom');
-        var introHeader = document.querySelector('.intro-header').offsetHeight;
-        var introHeader = introHeader > 597 ? introHeader : 500;
-        var toc = document.querySelector('.toc-wrap');
-        scrollCheck(toc,'toc-fixed',introHeader-60);
-        // scrollCheck(navbar,'is-fixed');
-    }
-})();
